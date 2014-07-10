@@ -54,7 +54,6 @@ handle_call(fetch, _From,  State) ->
 delete(Pid) ->
 	gen_server:cast(Pid, delete).
 
-
 terminate(_Reason, _State) ->
 	sc_store:delete(self()),
 	ok.
