@@ -11,10 +11,13 @@
 -record(state, {value, lease_time, start_time}).
 create(Value, LeaseTime) ->
     sc_sup:start_child(Value, LeaseTime).
+
 create(Value) ->
     create(Value, ?DEFAULT_LEASE_TIME).
+
 start_link(Value, LeaseTime) ->
     gen_server:start_link(?MODULE, [Value, LeaseTime], []).
+
 init([Value, LeaseTime]) ->
     StartTime = calendar:datetime_to_gregorian_seconds(calendar:local_time()), 
     {ok,#state{value = Value, lease_time = LeaseTime, start_time = StartTime},
@@ -22,6 +25,7 @@ init([Value, LeaseTime]) ->
 
 time_left(_StartTime, infinity) ->
     infinity;
+
 time_left(StartTime, LeaseTime) ->
    CurrentTime =
       calendar:datetime_to_gregorian_seconds(calendar:local_time()),
@@ -35,6 +39,8 @@ handle_cast({replace, Value}, State) ->
 	#state{lease_time = LeaseTime, start_time = StartTime} = State, 
 	TimeLeft = time_left(StartTime, LeaseTime),
 	{noreply, State#state{value = Value}, TimeLeft};
+
+  
 handle_cast(delete, State) ->
   {stop, normal, State}.
 

@@ -20,4 +20,6 @@ init([]) ->
    Type = worker,
    AChild = {sc_element, {sc_element, start_link, []},
              Restart, Shutdown, Type, [sc_element]},
-   {ok, {SupFlags, [AChild]}}.
+   Event = {sc_event, {sc_event, start_link, []},
+              Restart, Shutdown, Type, [sc_event]},
+   {ok, {SupFlags, [AChild, Event]}}.
