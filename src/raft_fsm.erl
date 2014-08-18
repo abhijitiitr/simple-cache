@@ -12,7 +12,9 @@
 -export([start_link/0]).
 
 %% gen_fsm callbacks
--export([init/1, state_name/2, state_name/3, handle_event/3,
+-export([init/1, candidate/2, candidate/3,
+         follower/2, follower/3, 
+         leader/2, leader/3, handle_event/3,
          handle_sync_event/4, handle_info/3, terminate/3, code_change/4]).
 
 -define(SERVER, ?MODULE).
@@ -42,7 +44,7 @@ start_link() ->
 %% initialize.
 %%--------------------------------------------------------------------
 init([]) ->
-  {ok, state_name, nobody}.
+  {ok, follower, nobody}.
 
 %%--------------------------------------------------------------------
 %% Function:
@@ -56,7 +58,15 @@ init([]) ->
 %% the current state name StateName is called to handle the event. It is also
 %% called if a timeout occurs.
 %%--------------------------------------------------------------------
-state_name(_Event, State) ->
+follower(_Event, State) ->
+  {next_state, state_name, State}.
+
+
+candidate(_Event, State) ->
+  {next_state, state_name, State}.
+
+
+leader(_Event, State) ->
   {next_state, state_name, State}.
 
 %%--------------------------------------------------------------------
@@ -74,7 +84,17 @@ state_name(_Event, State) ->
 %% gen_fsm:sync_send_event/2,3, the instance of this function with the same
 %% name as the current state name StateName is called to handle the event.
 %%--------------------------------------------------------------------
-state_name(_Event, _From, State) ->
+follower(_Event, _From, State) ->
+  Reply = ok,
+  {reply, Reply, state_name, State}.
+
+
+candidate(_Event, _From, State) ->
+  Reply = ok,
+  {reply, Reply, state_name, State}.
+
+
+leader(_Event, _From, State) ->
   Reply = ok,
   {reply, Reply, state_name, State}.
 
