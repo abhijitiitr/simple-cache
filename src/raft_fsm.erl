@@ -131,6 +131,10 @@ handle_sync_event(Event, From, StateName, State) ->
   Reply = ok,
   {reply, Reply, StateName, State}.
 
+connect_to_nodes([])
+connect_to_nodes(Node | Nodes) -> 
+  net_adm:ping()
+
 %%--------------------------------------------------------------------
 %% Function:
 %% handle_info(Info,StateName,State)-> {next_state, NextStateName, NextState}|
